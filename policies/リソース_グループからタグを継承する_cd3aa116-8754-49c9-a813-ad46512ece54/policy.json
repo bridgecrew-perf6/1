@@ -1,0 +1,53 @@
+{
+ "properties": {
+  "displayName": "リソース グループからタグを継承する",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "リソースが作成または更新された場合に、親リソース グループから指定されたタグと値を追加または置換します。既存のリソースは、修復タスクをトリガーすることによって修復できます。",
+  "metadata": {
+   "version": "1.0.0",
+   "category": "Tags"
+  },
+  "parameters": {
+   "tagName": {
+    "type": "String",
+    "metadata": {
+     "displayName": "タグ名",
+     "description": "タグの名前 (例: environment)"
+    }
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "[concat('tags[', parameters('tagName'), ']')]",
+      "notEquals": "[resourceGroup().tags[parameters('tagName')]]"
+     },
+     {
+      "value": "[resourceGroup().tags[parameters('tagName')]]",
+      "notEquals": ""
+     }
+    ]
+   },
+   "then": {
+    "effect": "modify",
+    "details": {
+     "roleDefinitionIds": [
+      "/providers/microsoft.authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c"
+     ],
+     "operations": [
+      {
+       "operation": "addOrReplace",
+       "field": "[concat('tags[', parameters('tagName'), ']')]",
+       "value": "[resourceGroup().tags[parameters('tagName')]]"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/cd3aa116-8754-49c9-a813-ad46512ece54",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "cd3aa116-8754-49c9-a813-ad46512ece54"
+}
